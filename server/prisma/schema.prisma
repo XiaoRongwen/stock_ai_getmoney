@@ -1,0 +1,49 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String
+  role      String    @default("user")  // user | vip | admin
+  vipExpiry DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model DailyReport {
+  id          Int      @id @default(autoincrement())
+  date        String   @unique                // YYYY-MM-DD
+  stocks      String   @db.LongText           // JSON 字符串
+  summary     String   @db.Text              // 一句话总结
+  market_mood String   @default("")           // 偏多/震荡/偏空
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Telegraph {
+  id        Int      @id                 // 财联社原始 id，天然去重
+  ctime     Int                          // 秒级时间戳
+  level     String   @default("C")       // A=加红 B=重要 C=普通
+  title     String?  @db.Text
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([ctime])                       // 按时间查询加速
+  @@index([level])
+}
+
+model NewsReport {
+  id        Int      @id @default(autoincrement())
+  date      String   @unique             // YYYY-MM-DD，每天一条
+  content   String   @db.LongText        // 原始新闻联播文本
+  analysis  String   @db.LongText        // AI 分析结果（Markdown）
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
