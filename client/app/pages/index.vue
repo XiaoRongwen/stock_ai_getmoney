@@ -19,37 +19,61 @@
             实时
           </div>
         </div>
-        <div v-if="loading" class="flex items-center justify-center py-16 text-sm" style="color:#9ca3af;">
-          <span class="animate-pulse">加载中...</span>
+        <div v-if="loading" class="flex items-center justify-center py-16">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-5 h-5 border-2 border-red-200 border-t-red-500 rounded-full animate-spin"></div>
+            <span class="text-xs" style="color:#9ca3af;">加载中...</span>
+          </div>
         </div>
-        <div v-else-if="error" class="flex items-center justify-center py-16 text-sm" style="color:#e03131;">
+        <div v-else-if="error" class="flex items-center justify-center py-16 text-xs" style="color:#e03131;">
           ⚠️ {{ error }}
         </div>
-        <div v-else class="divide-y overflow-y-auto" style="border-color:#f3f4f6; max-height:70vh;">
-          <div v-for="item in items" :key="item.id"
-            class="flex gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors">
-            <div class="shrink-0 mt-0.5">
-              <span class="text-xs px-1.5 py-0.5 rounded font-medium"
-                :style="item.level === 'A' ? 'background:#fff1f0;color:#e03131;'
-                  : item.level === 'B' ? 'background:#fffbeb;color:#d97706;'
-                  : 'background:#f9fafb;color:#9ca3af;'">
-                {{ item.level === 'A' ? '重要' : item.level === 'B' ? '关注' : '普通' }}
-              </span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p v-if="item.title" class="text-sm font-medium leading-snug" style="color:#1a1a2e;">{{ item.title }}</p>
-              <p class="text-xs leading-relaxed mt-0.5" :class="item.title ? 'line-clamp-2' : 'text-sm'" style="color:#4b5563;">
-                {{ item.content }}
-              </p>
-              <div class="flex items-center gap-3 mt-2">
-                <span class="text-xs" style="color:#9ca3af;">{{ formatTime(item.ctime) }}</span>
-                <button class="text-xs px-2 py-0.5 rounded" style="background:#fff1f0;color:#e03131;cursor:pointer;" @click="openAi(item)">
+        <div v-else class="overflow-y-auto px-4 py-3" style="max-height:70vh;">
+          <div v-for="(item, idx) in items" :key="item.id"
+            class="relative pl-5 pb-3"
+            :style="idx < items.length - 1 ? 'border-left:2px solid #f3f4f6;' : 'border-left:2px solid transparent;'">
+
+            <!-- 时间轴圆点 -->
+            <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full"
+              :style="item.level === 'A' ? 'background:#e03131;'
+                : item.level === 'B' ? 'background:#d97706;'
+                : 'background:#d1d5db;'"></div>
+
+            <!-- 卡片 -->
+            <div class="rounded-lg px-3 py-2.5 hover:bg-gray-50 transition-colors"
+              style="border:1px solid #f3f4f6;">
+
+              <!-- 第一行：等级标签 + 时间 + AI按钮 -->
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                  :style="item.level === 'A' ? 'background:#fff1f0;color:#e03131;'
+                    : item.level === 'B' ? 'background:#fffbeb;color:#d97706;'
+                    : 'background:#f9fafb;color:#9ca3af;'">
+                  {{ item.level === 'A' ? '重要' : item.level === 'B' ? '关注' : '普通' }}
+                </span>
+                <span class="text-[10px]" style="color:#9ca3af;">{{ formatTime(item.ctime) }}</span>
+                <button
+                  class="ml-auto text-[10px] px-2 py-0.5 rounded font-medium transition-colors"
+                  style="background:#fff1f0;color:#e03131;cursor:pointer;"
+                  @click="openAi(item)">
                   🤖 AI 解读
                 </button>
               </div>
+
+              <!-- 标题 -->
+              <p v-if="item.title" class="text-xs font-medium leading-snug mb-0.5" style="color:#1a1a2e;">{{ item.title }}</p>
+
+              <!-- 内容 -->
+              <p class="text-[11px] leading-relaxed" :class="item.title ? 'line-clamp-2' : ''" style="color:#4b5563;">
+                {{ item.content }}
+              </p>
             </div>
           </div>
-          <div v-if="!items.length" class="flex items-center justify-center py-16 text-sm" style="color:#9ca3af;">暂无数据</div>
+
+          <div v-if="!items.length" class="flex flex-col items-center justify-center py-16 gap-2">
+            <span class="text-2xl">📡</span>
+            <p class="text-xs" style="color:#9ca3af;">暂无电报数据</p>
+          </div>
         </div>
       </div>
 
