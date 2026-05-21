@@ -1,6 +1,7 @@
 # 📈 GetMoney · AI 股票情报助手
 
 实时抓取**财联社电报**，每日汇总**新闻联播**，结合大语言模型深度分析，智能生成个股推荐与投资洞察。
+<img width="2559" height="1238" alt="b830e9fabf8131e68ae3168bad5456d1" src="https://github.com/user-attachments/assets/bc8bfd83-6cc1-4499-815c-70bb2a7bc8cd" />
 
 ---
 
